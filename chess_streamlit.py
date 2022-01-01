@@ -7,10 +7,12 @@ import datetime as dt
 import api_key
 import plotly.express as px
 
+
 token1 = api_key.token
 session = berserk.TokenSession(token1)
 client = berserk.Client(session=session)
 
+st.title("Noakanoi Lichess Ratings")
 
 game_modes = ("Bullet", "Blitz", "Rapid", "Classical")
 selected_game_mode = st.selectbox("Choose a game mode", game_modes)
@@ -36,6 +38,3 @@ def plot_data():
     
 plot_data()
     
-
-#x = st.slider('Select the year range',bullet_date[0], bullet_date[-1], (bullet_date[0], bullet_date[-1]))
-#st.line_chart(bullet_data)
