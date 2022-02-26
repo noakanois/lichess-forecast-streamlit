@@ -10,6 +10,8 @@ from fbprophet.plot import plot_plotly
 from plotly import graph_objs as go
 import sys
 
+token1 = st.secrets["api_key"]
+
 session = berserk.TokenSession(token1)
 client = berserk.Client(session=session)
 
