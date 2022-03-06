@@ -1,4 +1,4 @@
-import streamlit as st
+""""import streamlit as st
 import pandas as pd
 import berserk
 import numpy as np
@@ -68,4 +68,46 @@ if not data.empty:
     if trend:
         st.subheader("Forecast components")
         fig2 = m.plot_components(forecast)
-        st.write(fig2)
+        st.write(fig2)"""
+        
+import streamlit as st
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import plotly.express as px
+import sqlite3 as sql
+
+game_mode = ["li_bullet", "li_blitz", "li_rapid", "ch_bullet", "ch_blitz", "ch_rapid"]
+
+dict_game = {x:pd.read_csv(f"{x}_predict.csv") for x in game_mode}
+
+st.title("Elo Converter / Chesscom <-> Lichess")
+
+x = st.text_input("Put in the rating you want to convert", 1500)
+
+head = ["ch_bullet", "ch_blitz", "ch_rapid", "li_bullet", "li_blitz", "li_rapid"]
+dict = {"ch_bullet":"Chesscom Bullet", "ch_blitz":"Chesscom Blitz", "ch_rapid":"Chesscom Rapid", "li_bullet":"Lichess Bullet", "li_blitz":"Lichess Blitz", "li_rapid":"Lichess Rapid"}
+
+inv = {v: k for k, v in dict.items()}
+
+selected_game_mode1 = st.selectbox("Choose the rating you want to convert from", dict.values(), 1)
+selected_game_mode2 = st.selectbox("Choose the rating you want to convert to", dict.values(), 4)
+
+selected_game_mode_1 = inv[selected_game_mode1]
+selected_game_mode_2 = inv[selected_game_mode2]
+
+df = dict_game[selected_game_mode_1][[selected_game_mode_1, f"predicted_{selected_game_mode_2}"]]
+data = df.at[int(x)-700, f"predicted_{selected_game_mode_2}"]
+
+
+st.header(f"{dict[selected_game_mode_1]}: {x}")
+st.header(f"{dict[selected_game_mode_2]}: {int(data)} predicted")
+
+x = df[selected_game_mode_1][::30]
+y = df[f"predicted_{selected_game_mode_2}"][::30]
+
+fig = px.scatter(x = x, y = y, title= "Rating")
+fig.update_xaxes(range=[750, 2700])
+fig.update_yaxes(range=[750, 2700])
+fig.layout.update(title_text="Rating")
+st.plotly_chart(fig) 
